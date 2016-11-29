@@ -325,11 +325,14 @@ def parse_file_contents(data):
                                      'policy_name2': 'policy2,...}
     """
     try:
-        parsed = yaml.safe_load(data)
-    except yaml.YAMLError as e:
-        # For backwards-compatibility, convert yaml error to ValueError,
-        # which is what JSON loader raised.
-        raise ValueError(six.text_type(e))
+        parsed = jsonutils.loads(data)
+    except ValueError:
+        try:
+            parsed = yaml.safe_load(data)
+        except yaml.YAMLError as e:
+            # For backwards-compatibility, convert yaml error to ValueError,
+            # which is what JSON loader raised.
+            raise ValueError(six.text_type(e))
     return parsed
 
 
